@@ -1,36 +1,40 @@
-EyeControl 0.1.0 — AKM12 (https://akm12.com/logiciels/eyecontrol)
+EyeControl 0.2.0 — AKM12 (https://akm12.com/logiciels/eyecontrol)
 =======================================================================
 
-EyeControl est une console de télémaintenance qui s'ouvre directement dans le
-terminal (CMD, PowerShell, Windows Terminal) avec la commande « eyecontrol ».
+EyeControl est la console de télémaintenance du technicien : tapez « eyecontrol »
+dans CMD, PowerShell ou Windows Terminal. La prise en main (écran, souris, clavier,
+terminal, fichiers) passe par RustDesk et par le serveur RustDesk d'AKM12.
 
-Version 0.1.0 : console interactive seulement.
-  Disponibles : help, status, version, clear, exit (et eyecontrol --version / --help).
-  Les autres commandes (login, devices, connect, shell, desktop, screen,
-  control) sont affichées comme « not available yet » : elles ne font rien.
+AVANT DE COMMENCER (poste du technicien)
+  1. Installer RustDesk : https://rustdesk.com
+  2. RustDesk > Paramètres > Réseau > Serveur ID/Relais :
+       Serveur ID et serveur relais : hosting.websentinelle.com
+       Clé : Su9SDic3OWDbKFdJoqOiItwP+Gw2Ec6OUYIfGSf5PBo=
+     (la commande « eyecontrol setup » rappelle ces valeurs)
 
-INSTALLATION (Windows 10 / 11)
+INSTALLATION D'EYECONTROL (Windows 10 / 11)
   1. Extraire l'archive, par exemple dans C:\Outils\EyeControl
   2. Ajouter ce dossier au PATH de votre compte, dans PowerShell :
        [Environment]::SetEnvironmentVariable("Path",
          [Environment]::GetEnvironmentVariable("Path","User") + ";C:\Outils\EyeControl", "User")
   3. Fermer puis rouvrir le terminal, et taper :  eyecontrol
 
-  Sans modifier le PATH, on peut aussi lancer directement :
-       C:\Outils\EyeControl\eyecontrol.exe
-
   Si Windows SmartScreen s'affiche : vérifiez l'empreinte SHA-256 publiée,
   puis « Informations complémentaires » > « Exécuter quand même ».
 
-UTILISATION
-  eyecontrol              ouvre la console (Tab : compléter, flèches : historique,
-                          Ctrl+C : effacer la ligne, exit ou Ctrl+D : quitter)
-  eyecontrol status       affiche l'état sans ouvrir la console
-  eyecontrol --version    affiche la version
+DÉPANNER UN PC
+  1. La personne ouvre https://akm12.com/assistance, lance le module et vous lit
+     son ID et son mot de passe.
+  2. eyecontrol > connect 482 913 507   (saisir le mot de passe dans RustDesk)
+  3. Pendant la session : shell (terminal), files (fichiers), desktop, sysinfo
+  4. Fin : fermer les fenêtres RustDesk, puis « disconnect »
 
-Fichiers créés : %APPDATA%\EyeControl (configuration, facultative) et
-%LOCALAPPDATA%\EyeControl (journal et historique). Pour désinstaller : supprimer
-le dossier du programme, ces deux dossiers, et retirer le dossier du PATH.
+Autres commandes : devices (PC déjà dépannés), status, setup, help, exit.
+login, logout, screen et control ne sont pas encore disponibles (elles ne font rien).
 
-Guide complet : Guide_EyeControl-0.1.0.pdf (https://akm12.com/logiciels/eyecontrol)
+Fichiers : %APPDATA%\EyeControl (configuration, facultative) et
+%LOCALAPPDATA%\EyeControl (journal et historique).
+
+Guide complet : Guide_EyeControl-0.2.0.pdf (https://akm12.com/logiciels/eyecontrol)
 Licence : voir LICENSE.txt (code consultable, tous droits réservés).
+RustDesk est un logiciel libre (AGPL-3.0) de ses auteurs, installé séparément.

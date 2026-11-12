@@ -44,14 +44,14 @@ def test_cmd_version() -> None:
 
 
 def test_powershell_version_and_exit_code() -> None:
-    script = "eyecontrol --version; eyecontrol devices *> $null; exit $LASTEXITCODE"
+    script = "eyecontrol --version; eyecontrol login *> $null; exit $LASTEXITCODE"
     result = run(["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script])
     assert f"EyeControl {__version__}" in result.stdout
-    assert result.returncode == 3  # 'devices' is not available yet
+    assert result.returncode == 3  # 'login' is not available yet
 
 
 def test_cmd_piped_session() -> None:
     result = run(["cmd.exe", "/d", "/c", "eyecontrol"], stdin="help\nstatus\nexit\n")
     assert result.returncode == 0, result.stderr
     assert "Remote Access Terminal" in result.stdout
-    assert "Technician" in result.stdout
+    assert "RustDesk" in result.stdout

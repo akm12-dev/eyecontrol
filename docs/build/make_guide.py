@@ -66,6 +66,7 @@ th { background: #f1f5fb; }
 
 def build_html() -> str:
     logo = img(ROOT / "assets" / "logo.png")
+    key = "Su9SDic3OWDbKFdJoqOiItwP+Gw2Ec6OUYIfGSf5PBo="
     return f"""<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Guide EyeControl {VERSION}</title><style>{CSS}</style></head><body>
 
 <section class="cover">
@@ -78,158 +79,163 @@ def build_html() -> str:
 <section class="toc" style="break-after: page">
 <h1>Sommaire</h1>
 <ol>
-  <li>Présentation et état de la version {VERSION}</li>
-  <li>Installation sous Windows</li>
-  <li>Installation sous Linux (Kali, Debian, Ubuntu)</li>
-  <li>Premier lancement</li>
-  <li>La console interactive</li>
+  <li>Comment fonctionne EyeControl</li>
+  <li>Préparer le poste du technicien</li>
+  <li>Installer EyeControl (Windows, Linux)</li>
+  <li>Dépanner un PC, étape par étape</li>
+  <li>Toutes les commandes</li>
   <li>Commandes directes et codes de sortie</li>
-  <li>État, fichiers et configuration</li>
+  <li>Fichiers et configuration</li>
   <li>Dépannage</li>
   <li>Désinstallation</li>
   <li>Sécurité et vérification des fichiers</li>
 </ol>
-<div class="note">Ce guide décrit uniquement ce que fait réellement la version {VERSION}. Les fonctions qui ne sont pas encore
-développées sont signalées comme telles, dans le guide comme dans le logiciel.</div>
+<div class="note">Ce guide décrit ce que fait réellement la version {VERSION}. Les commandes encore en préparation sont
+signalées comme telles, dans le guide comme dans le logiciel.</div>
 </section>
 
-<h2>1. Présentation et état de la version {VERSION}</h2>
-<p>EyeControl est une console de télémaintenance qui s’ouvre <b>directement dans le terminal</b> : on tape
-<code>eyecontrol</code> dans CMD, PowerShell, Windows Terminal ou un terminal Linux, et l’interface EyeControl
-apparaît, avec son invite <code>eyecontrol &gt;</code>. Aucune fenêtre, aucun navigateur.</p>
-<p>La version {VERSION} pose la base du logiciel : la commande, la console interactive et toutes les commandes prévues,
-avec leur aide et la vérification de leurs arguments.</p>
+<h2>1. Comment fonctionne EyeControl</h2>
+<p>EyeControl est la console du technicien : on tape <code>eyecontrol</code> dans CMD, PowerShell, Windows Terminal ou un
+terminal Linux, puis on travaille au clavier. La prise en main elle-même (image de l’écran, souris, clavier, terminal,
+transfert de fichiers) est assurée par <b>RustDesk</b>, un logiciel libre éprouvé, et passe par le <b>serveur d’AKM12</b>
+(<code>hosting.websentinelle.com</code>), pas par un service tiers.</p>
 <table>
-<tr><th>Disponible</th><th>Pas encore disponible</th></tr>
-<tr><td><code>help</code>, <code>status</code>, <code>version</code>, <code>clear</code>, <code>exit</code><br>
-<code>eyecontrol --version</code>, <code>eyecontrol --help</code><br>autocomplétion, historique, barre d’état</td>
-<td><code>login</code>, <code>logout</code>, <code>devices</code>, <code>connect</code>, <code>disconnect</code>,
-<code>sysinfo</code>, <code>shell</code>, <code>desktop</code>, <code>screen</code>, <code>control</code></td></tr>
+<tr><th>Qui</th><th>Ce qu’il utilise</th></tr>
+<tr><td>Le technicien</td><td>EyeControl + RustDesk installé sur son poste, réglé sur le serveur AKM12</td></tr>
+<tr><td>La personne dépannée</td><td>Le module d’assistance de <b>akm12.com/assistance</b> : un seul fichier à lancer, rien à installer ni à régler</td></tr>
 </table>
-<div class="note warn">Les commandes « pas encore disponibles » affichent <code>Not available … is not available yet</code>
-et <b>ne font rien</b> : rien n’est envoyé ni exécuté. La version {VERSION} ne se connecte à aucun ordinateur.</div>
+<p>La personne lance le module, vous lit son <b>ID</b> et son <b>mot de passe</b> ; vous tapez <code>connect &lt;ID&gt;</code>
+et la fenêtre RustDesk s’ouvre. Le mot de passe se saisit dans RustDesk : EyeControl ne le voit jamais.</p>
+<div class="note warn">EyeControl est destiné à l’assistance <b>autorisée</b> : aucune session sans l’ID et le mot de passe
+que la personne vous communique elle-même, et elle peut tout arrêter en fermant sa fenêtre.</div>
 
-<h2>2. Installation sous Windows</h2>
-<h3>Avec l’archive (recommandé)</h3>
+<h2>2. Préparer le poste du technicien</h2>
 <ol>
-<li>Téléchargez <code>EyeControl-{VERSION}-windows.zip</code> depuis akm12.com et vérifiez son empreinte SHA-256 (chapitre 10).</li>
-<li>Extrayez l’archive dans un dossier, par exemple <code>C:\\Outils\\EyeControl</code>.</li>
-<li>Ajoutez ce dossier au PATH de votre compte, dans PowerShell :</li>
+<li>Installez RustDesk depuis <b>https://rustdesk.com</b> (bouton Download, version Windows ou Linux).</li>
+<li>Ouvrez RustDesk › Paramètres › Réseau › « Serveur ID/Relais », puis renseignez :</li>
+</ol>
+<table>
+<tr><td>Serveur ID</td><td><code>hosting.websentinelle.com</code></td></tr>
+<tr><td>Serveur relais</td><td><code>hosting.websentinelle.com</code></td></tr>
+<tr><td>Clé</td><td><code>{key}</code></td></tr>
+<tr><td>Serveur API</td><td>(laisser vide)</td></tr>
+</table>
+<ol start="3">
+<li>En bas de la fenêtre RustDesk, l’état doit indiquer « Prêt ».</li>
+</ol>
+<p>La commande <code>eyecontrol setup</code> rappelle ces valeurs et vérifie les réglages. Avec un RustDesk portable (non
+installé), <code>eyecontrol setup --write</code> les écrit pour vous, RustDesk fermé.</p>
+
+<h2>3. Installer EyeControl</h2>
+<h3>Windows 10 / 11</h3>
+<ol>
+<li>Téléchargez <code>EyeControl-{VERSION}-windows.zip</code> sur akm12.com et vérifiez son empreinte (chapitre 10).</li>
+<li>Extrayez-le, par exemple dans <code>C:\\Outils\\EyeControl</code>, puis ajoutez ce dossier au PATH :</li>
 </ol>
 <pre>[Environment]::SetEnvironmentVariable("Path",
   [Environment]::GetEnvironmentVariable("Path","User") + ";C:\\Outils\\EyeControl", "User")</pre>
-<ol start="4">
-<li>Fermez puis rouvrez le terminal et tapez <code>eyecontrol --version</code> : la réponse doit être <code>EyeControl {VERSION}</code>.</li>
-</ol>
-<p>Sans toucher au PATH, vous pouvez aussi lancer directement <code>C:\\Outils\\EyeControl\\eyecontrol.exe</code>.</p>
-<h3>Avec Python (pour les développeurs)</h3>
-<p>Si Python 3.12 ou plus récent est installé, le paquet <code>eyecontrol-{VERSION}-py3-none-any.whl</code> s’installe avec :</p>
-<pre>python -m pip install eyecontrol-{VERSION}-py3-none-any.whl</pre>
-
-<h2>3. Installation sous Linux (Kali, Debian, Ubuntu)</h2>
-<p>Kali protège le Python du système : on installe EyeControl avec <b>pipx</b>, dans un environnement isolé.</p>
+<ol start="3"><li>Rouvrez le terminal et tapez <code>eyecontrol --version</code> : la réponse est <code>EyeControl {VERSION}</code>.</li></ol>
+<h3>Linux (Kali, Debian, Ubuntu)</h3>
 <pre>sudo apt install -y pipx
 pipx ensurepath                 # puis fermer et rouvrir le terminal
 pipx install ./eyecontrol-{VERSION}-py3-none-any.whl
 eyecontrol --version</pre>
-<div class="note">La console est prévue pour Linux et ses tests automatiques couvrent les dossiers Linux, mais elle n’a pas
-encore été essayée sur une vraie machine Kali. Merci de signaler tout problème (chapitre 8).</div>
+<div class="note">Sous Linux, EyeControl cherche RustDesk dans <code>/usr/bin/rustdesk</code> (paquet .deb officiel). La
+console n’a pas encore été essayée sur une vraie machine Kali.</div>
 
-<h2>4. Premier lancement</h2>
-<p>Tapez <code>eyecontrol</code> dans le terminal. L’écran d’accueil affiche le logo, la version et l’état :
-serveur, technicien et session. En version {VERSION}, ils sont toujours <i>not configured</i>, <i>not signed in</i>
-et <i>none</i>, ce qui est normal.</p>
-{shot("accueil", "Écran d’accueil d’EyeControl dans Windows PowerShell")}
+<h2>4. Dépanner un PC, étape par étape</h2>
+{shot("accueil", "Écran d’accueil : serveur AKM12, RustDesk trouvé, aucune session")}
+<ol>
+<li>Envoyez à la personne le lien <b>akm12.com/assistance</b>. Elle télécharge le module et l’ouvre.</li>
+<li>Elle vous lit l’ID (ex. <code>482 913 507</code>) et le mot de passe affichés dans sa fenêtre RustDesk.</li>
+<li>Dans EyeControl : <code>connect 482 913 507</code> (les espaces sont acceptés). La fenêtre RustDesk s’ouvre : saisissez-y
+le mot de passe.</li>
+<li>Pendant la session, l’invite devient <code>482913507 &gt;</code> : <code>shell</code> ouvre un terminal distant,
+<code>files</code> le transfert de fichiers, <code>desktop</code> rouvre l’écran distant, <code>sysinfo</code> rappelle le nom
+du PC et son système.</li>
+<li>À la fin : fermez les fenêtres RustDesk, puis <code>disconnect</code>. La personne ferme son module : plus personne ne
+peut se connecter.</li>
+</ol>
+{shot("session", "devices, connect, shell, files et disconnect")}
+<p><code>devices</code> liste les PC déjà dépannés depuis votre poste (historique RustDesk : ID, nom, utilisateur, système,
+dernière utilisation), filtrables avec <code>devices --type windows</code> (<code>linux</code>, <code>macos</code>,
+<code>android</code>, <code>ios</code>). La touche Tab complète les ID connus.</p>
 
-<h2>5. La console interactive</h2>
-<p>À l’invite <code>eyecontrol &gt;</code>, tapez une commande puis Entrée. La commande <code>help</code> liste toutes
-les commandes : celles marquées <b>ready</b> fonctionnent, celles marquées <i>planned</i> ne sont pas encore disponibles.</p>
-{shot("aide", "La commande help : commandes prêtes (ready) et prévues (planned)")}
-<h3>Raccourcis clavier</h3>
-<table>
-<tr><th>Touche</th><th>Effet</th></tr>
-<tr><td>Tab</td><td>Complète le nom de la commande ou de son argument (ex. <code>shell p</code> → <code>powershell</code>).</td></tr>
-<tr><td>↑ / ↓</td><td>Rappelle les commandes précédentes (historique conservé d’une session à l’autre).</td></tr>
-<tr><td>Ctrl+C</td><td>Efface la ligne en cours, sans quitter.</td></tr>
-<tr><td>Ctrl+D ou <code>exit</code></td><td>Quitte EyeControl.</td></tr>
-</table>
-<h3>Commandes disponibles</h3>
+<h2>5. Toutes les commandes</h2>
+{shot("aide", "La commande help")}
 <table>
 <tr><th>Commande</th><th>Rôle</th></tr>
-<tr><td><code>help</code></td><td>Liste les commandes. <code>help &lt;commande&gt;</code> affiche l’usage et l’état d’une commande.</td></tr>
-<tr><td><code>status</code></td><td>Version, environnement, serveur, technicien, session, chemins des fichiers, terminal, système.</td></tr>
-<tr><td><code>version</code></td><td>Affiche la version.</td></tr>
-<tr><td><code>clear</code> (ou <code>cls</code>)</td><td>Efface l’écran.</td></tr>
-<tr><td><code>exit</code> (ou <code>quit</code>)</td><td>Quitte la console.</td></tr>
+<tr><td><code>connect &lt;ID&gt;</code></td><td>Ouvre la prise en main du PC dans RustDesk et démarre la session EyeControl.</td></tr>
+<tr><td><code>desktop</code>, <code>shell</code>, <code>files</code></td><td>Écran distant, terminal distant, transfert de fichiers (session en cours, ou ID en argument).</td></tr>
+<tr><td><code>sysinfo</code></td><td>Nom du PC, utilisateur et système enregistrés par RustDesk.</td></tr>
+<tr><td><code>disconnect</code></td><td>Termine la session dans EyeControl (fermez aussi les fenêtres RustDesk).</td></tr>
+<tr><td><code>devices [--type TYPE]</code></td><td>PC déjà dépannés depuis ce poste.</td></tr>
+<tr><td><code>setup [--write]</code></td><td>Affiche ou écrit les réglages RustDesk du serveur AKM12.</td></tr>
+<tr><td><code>status</code></td><td>Version, serveur joignable ou non, RustDesk trouvé et bien réglé, session, fichiers.</td></tr>
+<tr><td><code>help</code>, <code>version</code>, <code>clear</code>, <code>exit</code></td><td>Aide, version, effacer l’écran, quitter.</td></tr>
+<tr><td><code>login</code>, <code>logout</code>, <code>screen</code>, <code>control</code></td><td><i>Pas encore disponibles</i> : elles l’indiquent et ne font rien.</td></tr>
 </table>
-<p>Les arguments sont vérifiés même pour les commandes pas encore disponibles : <code>shell bash</code> est refusé
-(seuls <code>cmd</code> et <code>powershell</code> sont acceptés), <code>devices --type</code> n’accepte que
-<code>windows</code>, <code>linux</code>, <code>android</code> ou <code>ios</code>.</p>
+<p>Raccourcis : <b>Tab</b> complète, <b>↑ ↓</b> rappellent l’historique, <b>Ctrl+C</b> efface la ligne, <b>Ctrl+D</b> ou
+<code>exit</code> quitte.</p>
 
 <h2>6. Commandes directes et codes de sortie</h2>
-<p>Certaines commandes se lancent sans ouvrir la console, directement depuis le terminal :
-<code>eyecontrol status</code>, <code>eyecontrol help</code>, <code>eyecontrol version</code>,
-<code>eyecontrol --version</code> et <code>eyecontrol --help</code>. Les commandes de session
-(<code>connect</code>, <code>shell</code>, <code>desktop</code>…) ne s’utilisent que dans la console : tapées directement,
-elles l’expliquent.</p>
+<p><code>status</code>, <code>connect</code>, <code>files</code>, <code>devices</code>, <code>setup</code>, <code>help</code> et
+<code>version</code> se lancent aussi sans ouvrir la console, par exemple <code>eyecontrol connect 482913507</code>.</p>
 {shot("commandes-directes", "Commandes directes dans PowerShell")}
-<p>Le code de sortie permet d’utiliser EyeControl dans un script :</p>
 <table>
 <tr><th>Code</th><th>Signification</th></tr>
-<tr><td>0</td><td>Succès</td></tr><tr><td>1</td><td>Erreur</td></tr>
-<tr><td>2</td><td>Erreur de saisie (commande inconnue, argument invalide)</td></tr>
+<tr><td>0</td><td>Succès</td></tr><tr><td>1</td><td>Erreur (ex. RustDesk introuvable)</td></tr>
+<tr><td>2</td><td>Erreur de saisie (commande inconnue, ID invalide, pas de session)</td></tr>
 <tr><td>3</td><td>Commande pas encore disponible</td></tr><tr><td>130</td><td>Interrompu (Ctrl+C)</td></tr>
 </table>
-<p>On peut aussi enchaîner des commandes : <code>type commandes.txt | eyecontrol</code> exécute chaque ligne du fichier.</p>
 
-<h2>7. État, fichiers et configuration</h2>
-{shot("etat", "status et help shell")}
+<h2>7. Fichiers et configuration</h2>
 <table>
 <tr><th></th><th>Windows</th><th>Linux</th></tr>
 <tr><td>Configuration (facultative)</td><td><code>%APPDATA%\\EyeControl\\config.toml</code></td><td><code>~/.config/eyecontrol/config.toml</code></td></tr>
 <tr><td>Journal et historique</td><td><code>%LOCALAPPDATA%\\EyeControl\\</code></td><td><code>~/.local/state/eyecontrol/</code></td></tr>
 </table>
-<p>Le journal (<code>logs\\eyecontrol.log</code>, 5 fichiers de 1 Mo au maximum) enregistre le nom des commandes lancées,
-jamais leurs arguments. Le fichier <code>config.toml</code> n’est pas nécessaire en version {VERSION} ; il accepte :</p>
-<pre>[logging]
-level = "INFO"        # DEBUG, INFO, WARNING ou ERROR</pre>
-<p>Variables d’environnement reconnues : <code>EYECONTROL_LOG_LEVEL</code>, <code>EYECONTROL_ENV</code>
-(<code>production</code> ou <code>development</code>), <code>EYECONTROL_CONFIG_DIR</code> et <code>EYECONTROL_DATA_DIR</code>
-(pour déplacer les dossiers). Une valeur invalide est signalée par un avertissement, sans bloquer le logiciel.</p>
+<p>Par défaut, EyeControl utilise le serveur AKM12. Pour un autre serveur RustDesk, ou un RustDesk installé ailleurs :</p>
+<pre>[rustdesk]
+host = "mon-serveur.exemple.fr"
+key = "clé publique du serveur"
+client = "D:\\Outils\\RustDesk\\rustdesk.exe"   # facultatif</pre>
+<p>Le journal enregistre le nom des commandes lancées, jamais leurs arguments (ni les ID, ni les mots de passe).
+EyeControl ne lit dans RustDesk que les réglages du serveur et la section <code>[info]</code> de l’historique (nom du PC,
+utilisateur, système), jamais les mots de passe enregistrés.</p>
 
 <h2>8. Dépannage</h2>
 <table>
 <tr><th>Problème</th><th>Solution</th></tr>
-<tr><td>« eyecontrol n’est pas reconnu… »</td><td>Le dossier n’est pas dans le PATH, ou le terminal n’a pas été rouvert.
-Rouvrez-le, ou lancez <code>eyecontrol.exe</code> avec son chemin complet.</td></tr>
-<tr><td>Windows SmartScreen bloque le lancement</td><td>L’exécutable n’est pas encore signé. Vérifiez l’empreinte SHA-256 (chapitre 10),
-puis <b>Informations complémentaires › Exécuter quand même</b>. Ne désactivez pas votre antivirus.</td></tr>
-<tr><td>Le logo s’affiche en caractères simples</td><td>Le terminal ne gère pas les caractères spéciaux : EyeControl bascule
-automatiquement sur un logo simple. Windows Terminal affiche le logo complet.</td></tr>
-<tr><td>« Not available »</td><td>Normal : la commande n’est pas encore développée. Rien n’a été exécuté.</td></tr>
-<tr><td>Linux : <code>eyecontrol: command not found</code></td><td>Lancez <code>pipx ensurepath</code>, puis rouvrez le terminal.</td></tr>
+<tr><td>« the RustDesk client was not found »</td><td>Installez RustDesk (chapitre 2), ou indiquez son chemin dans <code>config.toml</code>.</td></tr>
+<tr><td>« does not seem to use the EyeControl server »</td><td>Réglez le serveur ID, le relais et la clé (<code>eyecontrol setup</code>).</td></tr>
+<tr><td>Serveur « not reachable » dans <code>status</code></td><td>Vérifiez la connexion Internet ; un pare-feu d’entreprise peut bloquer les ports 21115 à 21117.</td></tr>
+<tr><td>RustDesk ne trouve pas l’ID</td><td>Le module de la personne doit être ouvert et afficher « Prêt ». Faites-vous relire l’ID.</td></tr>
+<tr><td>« eyecontrol n’est pas reconnu »</td><td>Dossier absent du PATH ou terminal non rouvert.</td></tr>
+<tr><td>SmartScreen bloque <code>eyecontrol.exe</code></td><td>Exécutable non signé : vérifiez l’empreinte, puis « Informations complémentaires › Exécuter quand même ».</td></tr>
 </table>
-<p>Pour signaler un problème : <b>https://github.com/akm12-dev/releases/issues</b> ou <b>support@akm12.com</b>, en précisant
-la sortie de <code>eyecontrol status</code> et le message exact. N’envoyez jamais de mot de passe.</p>
+<p>Contact : <b>support@akm12.com</b>, avec la sortie de <code>eyecontrol status</code>. N’envoyez jamais de mot de passe.</p>
 
 <h2>9. Désinstallation</h2>
 <ul>
-<li><b>Archive Windows</b> : supprimez le dossier d’EyeControl, retirez-le du PATH (Paramètres › Système › Informations système ›
-Paramètres avancés › Variables d’environnement), puis supprimez <code>%APPDATA%\\EyeControl</code> et <code>%LOCALAPPDATA%\\EyeControl</code>.</li>
-<li><b>Python</b> : <code>python -m pip uninstall eyecontrol</code>.</li>
+<li><b>Windows</b> : supprimez le dossier d’EyeControl, retirez-le du PATH, puis supprimez <code>%APPDATA%\\EyeControl</code> et <code>%LOCALAPPDATA%\\EyeControl</code>.</li>
 <li><b>Linux</b> : <code>pipx uninstall eyecontrol</code>, puis supprimez <code>~/.config/eyecontrol</code> et <code>~/.local/state/eyecontrol</code>.</li>
+<li>RustDesk se désinstalle séparément (Paramètres Windows › Applications).</li>
 </ul>
 
 <h2>10. Sécurité et vérification des fichiers</h2>
-<p>Chaque fichier publié est accompagné de son empreinte SHA-256 (sur akm12.com et dans <code>SHA256SUMS-eyecontrol-{VERSION}.txt</code>).
-Vérifiez-la avant le premier lancement :</p>
+<p>Chaque fichier publié est accompagné de son empreinte SHA-256 (sur akm12.com et dans <code>SHA256SUMS-eyecontrol-{VERSION}.txt</code>) :</p>
 <pre>Get-FileHash .\\EyeControl-{VERSION}-windows.zip -Algorithm SHA256      # Windows
 sha256sum eyecontrol-{VERSION}-py3-none-any.whl                    # Linux</pre>
-<p>EyeControl est destiné exclusivement à l’assistance et à l’administration <b>autorisées</b>. Ses principes, qui
-s’appliqueront à toutes les fonctions futures : consentement explicite de la personne assistée, indicateur visible
-pendant une session, arrêt possible à tout moment, aucune fonction cachée, aucun contournement des protections du système.</p>
+<ul>
+<li>Aucune session sans l’ID et le mot de passe communiqués par la personne ; la fenêtre RustDesk reste visible chez elle et elle
+peut tout arrêter en la fermant.</li>
+<li>Connexions chiffrées de bout en bout, via le serveur d’AKM12 ; la clé publique du serveur évite qu’un autre serveur se fasse
+passer pour lui.</li>
+<li>EyeControl ne contient aucune fonction cachée et ne contourne aucune protection du système.</li>
+</ul>
 <p style="margin-top:8mm;color:#5b6675;font-size:9pt">EyeControl {VERSION} · AKM12 – Advanced Knowledge &amp; Maintenance · https://akm12.com ·
-Code consultable, tous droits réservés.</p>
+Code consultable, tous droits réservés. RustDesk est un logiciel libre (AGPL-3.0) de ses auteurs, utilisé sans modification.</p>
 </body></html>"""
 
 

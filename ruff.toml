@@ -5,3 +5,4 @@ known-first-party = ["eyecontrol"]
 
 [lint.per-file-ignores]
 "docs/build/*" = ["E501", "SIM115"]
+"tests/*" = ["E501"]

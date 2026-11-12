@@ -18,12 +18,13 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from prompt_toolkit.document import Document
 from prompt_toolkit.formatted_text import HTML
+from prompt_toolkit.formatted_text.html import html_escape
 from prompt_toolkit.history import FileHistory, History, InMemoryHistory
 from prompt_toolkit.styles import Style
 
 from eyecontrol.commands import CommandError, CommandScope, ExitCode, ExitRequested, parse_line
 from eyecontrol.commands.context import AppContext
-from eyecontrol.commands.planned import DEVICE_TYPES
+from eyecontrol.commands.remote import DEVICE_TYPES
 from eyecontrol.logging_setup import get_logger
 from eyecontrol.ui import render
 from eyecontrol.ui.theme import ACCENT
@@ -44,6 +45,9 @@ PROMPT_STYLE = Style.from_dict(
         "completion-menu.meta.completion.current": f"bg:{ACCENT} #000000",
     }
 )
+
+
+DEVICE_ID_COMMANDS = frozenset({"connect", "desktop", "shell", "files", "sysinfo"})
 
 
 class CommandCompleter(Completer):
@@ -77,6 +81,15 @@ class CommandCompleter(Completer):
             candidates = registry.names(CommandScope.INTERACTIVE)
         elif target.name == "devices":
             candidates = ("--type",)
+        elif target.name in DEVICE_ID_COMMANDS:
+            try:
+                devices = self._ctx.rustdesk.known_devices()
+            except Exception:  # completion must never break typing
+                return
+            for d in devices:
+                if d.device_id.startswith(current):
+                    yield Completion(d.device_id, start_position=-len(current), display_meta=d.hostname or d.platform)
+            return
         elif target.arg_choices:
             candidates = target.arg_choices
         else:
@@ -87,12 +100,10 @@ class CommandCompleter(Completer):
 
 
 def _toolbar(ctx: AppContext) -> HTML:
-    server = "<ok>configured</ok>" if ctx.settings.server_url else "<warn>not configured</warn>"
-    tech = f"<ok>{ctx.technician.username}</ok>" if ctx.technician.is_authenticated else "<warn>signed out</warn>"
-    session = f"<ok>{ctx.remote.device_id}</ok>" if ctx.remote else "none"
+    server = html_escape(ctx.settings.rustdesk_host)
+    session = f"<ok>{html_escape(ctx.remote.device_id)}</ok>" if ctx.remote else "none"
     return HTML(
-        f" server: {server}  ·  technician: {tech}  ·  session: {session}"
-        "    <key>Tab</key> complete  <key>↑↓</key> history  <key>Ctrl+D</key> quit "
+        f" server: {server}  ·  session: {session}    <key>Tab</key> complete  <key>↑↓</key> history  <key>Ctrl+D</key> quit "
     )
 
 

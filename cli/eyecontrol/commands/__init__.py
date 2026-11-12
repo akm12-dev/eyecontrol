@@ -16,9 +16,11 @@ from eyecontrol.commands.registry import (
 def build_registry() -> Registry:
     from eyecontrol.commands.builtin import register_builtin
     from eyecontrol.commands.planned import register_planned
+    from eyecontrol.commands.remote import register_remote
 
     registry = Registry()
     register_builtin(registry)
+    register_remote(registry)
     register_planned(registry)
     return registry
 

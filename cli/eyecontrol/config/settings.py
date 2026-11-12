@@ -10,6 +10,15 @@ EYECONTROL_SERVER_URL   URL of the EyeControl server (``https://`` required;
 EYECONTROL_LOG_LEVEL    DEBUG, INFO (default), WARNING or ERROR
 EYECONTROL_CONFIG_DIR   overrides the config folder
 EYECONTROL_DATA_DIR     overrides the data folder (logs, history)
+EYECONTROL_RUSTDESK_HOST    RustDesk ID/relay server (default: AKM12 server)
+EYECONTROL_RUSTDESK_KEY     public key of that server
+EYECONTROL_RUSTDESK_CLIENT  path of rustdesk(.exe) if it is not found automatically
+
+config.toml example::
+
+    [rustdesk]
+    host = "hosting.websentinelle.com"
+    key = "Su9SDic3OWDbKFdJoqOiItwP+Gw2Ec6OUYIfGSf5PBo="
 
 Default folders
 ---------------
@@ -25,6 +34,7 @@ Manager, Secret Service on Linux).
 from __future__ import annotations
 
 import os
+import re
 import sys
 import tomllib
 from collections.abc import Mapping
@@ -35,6 +45,12 @@ from urllib.parse import urlsplit
 
 LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
 LOG_LEVELS = frozenset({"DEBUG", "INFO", "WARNING", "ERROR"})
+
+# AKM12 self-hosted RustDesk server (public values: host name and public key).
+DEFAULT_RUSTDESK_HOST = "hosting.websentinelle.com"
+DEFAULT_RUSTDESK_KEY = "Su9SDic3OWDbKFdJoqOiItwP+Gw2Ec6OUYIfGSf5PBo="
+_HOST_RE = re.compile(r"^(?=.{1,253}$)[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?(?::\d{1,5})?$")
+_KEY_RE = re.compile(r"^[A-Za-z0-9+/]{43}=$")
 
 
 class Environment(StrEnum):
@@ -54,6 +70,9 @@ class Settings:
     server_url: str | None
     log_level: str
     warnings: tuple[str, ...] = ()
+    rustdesk_host: str = DEFAULT_RUSTDESK_HOST
+    rustdesk_key: str = DEFAULT_RUSTDESK_KEY
+    rustdesk_client: str | None = None
 
     @property
     def config_file(self) -> Path:
@@ -127,6 +146,8 @@ def load_settings(env: Mapping[str, str] | None = None, platform: str = sys.plat
     file_data, file_warnings = _read_config_file(config_dir / "config.toml")
     warnings.extend(file_warnings)
     server_section = file_data.get("server", {})
+    rustdesk_section = file_data.get("rustdesk", {})
+    rustdesk_section = rustdesk_section if isinstance(rustdesk_section, dict) else {}
     logging_section = file_data.get("logging", {})
     file_url = server_section.get("url") if isinstance(server_section, dict) else None
     file_level = logging_section.get("level") if isinstance(logging_section, dict) else None
@@ -144,6 +165,20 @@ def load_settings(env: Mapping[str, str] | None = None, platform: str = sys.plat
         warnings.append(f"log level {raw_level!r} is not valid; using INFO")
         raw_level = "INFO"
 
+    def pick(env_name: str, file_key: str) -> str | None:
+        value = env.get(env_name) or rustdesk_section.get(file_key)
+        return value.strip() if isinstance(value, str) and value.strip() else None
+
+    rustdesk_host = pick("EYECONTROL_RUSTDESK_HOST", "host") or DEFAULT_RUSTDESK_HOST
+    if not _HOST_RE.match(rustdesk_host):
+        warnings.append(f"RustDesk host {rustdesk_host!r} is not valid; using {DEFAULT_RUSTDESK_HOST}")
+        rustdesk_host = DEFAULT_RUSTDESK_HOST
+    rustdesk_key = pick("EYECONTROL_RUSTDESK_KEY", "key") or DEFAULT_RUSTDESK_KEY
+    if not _KEY_RE.match(rustdesk_key):
+        warnings.append("RustDesk key is not a valid public key; using the AKM12 server key")
+        rustdesk_key = DEFAULT_RUSTDESK_KEY
+    rustdesk_client = pick("EYECONTROL_RUSTDESK_CLIENT", "client")
+
     return Settings(
         environment=environment,
         config_dir=config_dir,
@@ -151,4 +186,7 @@ def load_settings(env: Mapping[str, str] | None = None, platform: str = sys.plat
         server_url=server_url,
         log_level=raw_level,
         warnings=tuple(warnings),
+        rustdesk_host=rustdesk_host,
+        rustdesk_key=rustdesk_key,
+        rustdesk_client=rustdesk_client,
     )

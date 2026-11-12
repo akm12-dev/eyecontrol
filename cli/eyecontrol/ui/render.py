@@ -41,21 +41,22 @@ WHERE = {
 }
 
 
-def _state_lines(ctx: AppContext) -> list[tuple[str, Text]]:
-    settings = ctx.settings
-    if settings.server_url:
-        server = Text.assemble((settings.server_url, "label"), ("  (not connected)", "muted"))
+def _state_lines(ctx: AppContext, *, check_server: bool = False) -> list[tuple[str, Text]]:
+    from eyecontrol.remote.rustdesk import server_reachable
+
+    host = ctx.settings.rustdesk_host
+    if check_server:
+        reachable = server_reachable(host.split(":")[0])
+        server = Text.assemble((host, "label"), ("  (reachable)", "ok") if reachable else ("  (not reachable)", "warn"))
     else:
-        server = Text("not configured", style="warn")
-    if ctx.technician.is_authenticated:
-        tech = Text(f"signed in as {ctx.technician.username}", style="ok")
-    else:
-        tech = Text("not signed in", style="warn")
+        server = Text(host, style="label")
+    exe = ctx.rustdesk.find_executable()
+    client = Text("found", style="ok") if exe else Text("not found: install RustDesk, then run 'setup'", style="warn")
     if ctx.remote:
         remote = Text(f"{ctx.remote.device_id} ({ctx.remote.computer_name})", style="ok")
     else:
         remote = Text("none", style="muted")
-    return [("Server", server), ("Technician", tech), ("Session", remote)]
+    return [("Server", server), ("RustDesk", client), ("Session", remote)]
 
 
 def banner(ctx: AppContext) -> None:
@@ -132,8 +133,18 @@ def status(ctx: AppContext) -> None:
     grid.add_column()
     grid.add_row("Version", f"{APP_NAME} {__version__}")
     grid.add_row("Environment", settings.environment.value)
-    for label, value in _state_lines(ctx):
+    for label, value in _state_lines(ctx, check_server=True):
         grid.add_row(label, value)
+    exe = ctx.rustdesk.find_executable()
+    if exe:
+        from eyecontrol.commands.remote import state_label
+        from eyecontrol.remote import RustDeskError
+
+        grid.add_row("RustDesk path", str(exe))
+        try:
+            grid.add_row("RustDesk settings", state_label(ctx.rustdesk.config_state()))
+        except RustDeskError as exc:
+            grid.add_row("RustDesk settings", Text(exc.message, style="warn"))
     config_state = "found" if settings.config_file.is_file() else "not created, optional"
     grid.add_row("Config file", Text.assemble(str(settings.config_file), (f"  ({config_state})", "muted")))
     grid.add_row("Log file", ctx.log_file or Text("disabled (log folder not writable)", style="warn"))
