@@ -26,7 +26,6 @@ from eyecontrol.commands.context import AppContext
 from eyecontrol.commands.planned import DEVICE_TYPES
 from eyecontrol.logging_setup import get_logger
 from eyecontrol.ui import render
-from eyecontrol.ui.render import short_phase
 from eyecontrol.ui.theme import ACCENT
 
 log = get_logger("repl")
@@ -62,11 +61,7 @@ class CommandCompleter(Completer):
             prefix = words[0].lower() if words else ""
             for command in registry.commands(CommandScope.INTERACTIVE):
                 if command.name.startswith(prefix):
-                    meta = (
-                        command.summary
-                        if command.available
-                        else f"{command.summary} · {short_phase(command.planned_phase or '')}"
-                    )
+                    meta = command.summary if command.available else f"{command.summary} · not available yet"
                     yield Completion(command.name, start_position=-len(prefix), display_meta=meta)
             return
         target = registry.get(words[0])

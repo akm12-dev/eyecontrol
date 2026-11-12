@@ -54,7 +54,7 @@ def test_all_specified_commands_exist() -> None:
     assert expected <= set(registry.names())
 
 
-def test_only_phase2_commands_are_marked_available() -> None:
+def test_only_implemented_commands_are_marked_available() -> None:
     available = {c.name for c in build_registry().commands() if c.available}
     assert available == {"help", "status", "version", "clear", "exit"}
 
@@ -92,7 +92,7 @@ def test_argument_choices_are_checked_before_availability(ctx: AppContext) -> No
     with pytest.raises(NotAvailableError) as info:
         ctx.registry.execute(ctx, "shell", ["PowerShell"], CommandScope.INTERACTIVE)
     assert info.value.exit_code == ExitCode.NOT_AVAILABLE
-    assert "phase 5" in info.value.message
+    assert info.value.message == "'shell' is not available yet."
 
 
 @pytest.mark.parametrize("name", ["login", "logout", "devices", "disconnect", "sysinfo", "desktop", "screen", "control"])

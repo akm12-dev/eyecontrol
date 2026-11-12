@@ -38,11 +38,11 @@ entre le poste du technicien et l'agent (WebRTC ; relais TURN si les deux sont d
 |---|---|---|
 | Console interactive | **prompt_toolkit + Rich** (au lieu de Textual) | Textual dessine en plein écran ; son mode « inline » n'est pas pris en charge sous Windows. Pour une expérience « à la Claude Code » (invite dans le terminal, historique de défilement conservé, sortie d'un shell distant qui défile), prompt_toolkit est l'outil adapté : édition de ligne, historique, autocomplétion, barre d'état, compatible conhost, Windows Terminal et terminaux Linux. Textual reste possible plus tard pour un écran plein (tableau de bord) si besoin. |
 | Commandes directes | **Typer** | `eyecontrol status`, `--help`, `--version`. Typer et la console appellent le **même registre** (`commands/registry.py`) : une seule logique, deux portes d'entrée. |
-| HTTPX / WebSockets | ajoutés en phase 3 | Pas de dépendance inutilisée tant qu'il n'y a pas de serveur. |
+| HTTPX / WebSockets | non ajoutés | Pas de dépendance inutilisée tant qu'il n'y a pas de serveur. |
 | Serveur | FastAPI + PostgreSQL + Alembic | Conforme au cahier des charges. Signalisation par WebSocket sécurisé (WSS). |
 | Agent Windows | Rust (`windows` crate) | ConPTY pour CMD/PowerShell ; Desktop Duplication API pour la capture ; un **service** (session 0) pour le système + un **processus dans la session utilisateur** pour l'écran, la souris, le clavier et l'indicateur visible. |
-| Viewer | **Rust** (proposition : winit + wgpu, décodage H.264) | Même langage que l'agent → types de protocole et transport partagés ; un seul exécutable léger ; fonctionne aussi sous **Linux** (indispensable si le technicien travaille depuis Kali). Choix définitif après un prototype en phase 6. |
-| Média temps réel | WebRTC | Chiffrement standard (DTLS-SRTP), ICE/STUN/TURN pour les NAT. Aucun chiffrement maison. Bibliothèque (webrtc-rs ou libwebrtc) à trancher en phase 6/7 par un prototype : libwebrtc est plus mature, webrtc-rs plus simple à intégrer. |
+| Viewer | **Rust** (proposition : winit + wgpu, décodage H.264) | Même langage que l'agent → types de protocole et transport partagés ; un seul exécutable léger ; fonctionne aussi sous **Linux** (indispensable si le technicien travaille depuis Kali). Choix définitif après un prototype. |
+| Média temps réel | WebRTC | Chiffrement standard (DTLS-SRTP), ICE/STUN/TURN pour les NAT. Aucun chiffrement maison. Bibliothèque (webrtc-rs ou libwebrtc) à trancher par un prototype : libwebrtc est plus mature, webrtc-rs plus simple à intégrer. |
 | Secrets | coffre du système | Gestionnaire d'identification Windows, Secret Service (GNOME Keyring/KWallet) sous Linux. Jamais dans `config.toml`. |
 
 ## 3. Modèle multiplateforme
@@ -89,17 +89,17 @@ Les capacités ne donnent **jamais** un accès à elles seules. Le serveur revé
 ```text
 eyecontrol/
 ├── cli/            console technicien (Python) — phases 1-2 FAITES
-├── server/         serveur FastAPI — phase 3
+├── server/         serveur — retiré du plan pour l'instant
 ├── agent/
-│   └── windows/    agent Windows (Rust) — phases 4-6
+│   └── windows/    agent Windows (Rust)
 │   (linux/ plus tard)
 ├── mobile/
 │   ├── android/    agent Android (Kotlin) — étape Android
 │   └── ios/        agent iOS (Swift) — étape iOS
-├── viewer/         fenêtre de visualisation (Rust) — phase 6
+├── viewer/         fenêtre de visualisation (Rust)
 ├── shared/
 │   └── protocol/   contrats communs (schémas JSON), exemples, cas invalides
-├── installer/      installateurs Windows / paquets Linux — phase 8
+├── installer/      installateurs Windows / paquets Linux
 ├── tests/          tests automatisés (cli/, shared/)
 └── docs/           cette documentation
 ```
@@ -110,7 +110,7 @@ L'agent n'existait pas encore : il est créé directement dans `agent/windows/`,
 
 * TLS partout (HTTPS/WSS), WebRTC DTLS-SRTP pour le média ; aucune cryptographie maison.
 * URL serveur validée : `https://` obligatoire (http seulement pour `localhost` en développement), pas d'identifiants dans l'URL.
-* Jetons courts et révocables ; architecture prête pour la MFA (phase 3).
+* Jetons courts et révocables ; architecture prête pour la MFA.
 * Consentement explicite pour l'assistance ponctuelle ; accès permanent seulement après inscription et autorisation de l'appareil.
 * Permissions séparées : vue, contrôle, terminal.
 * Indicateur visible sur l'appareil distant pendant toute session graphique ; arrêt immédiat par l'utilisateur.

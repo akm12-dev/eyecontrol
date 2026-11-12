@@ -21,7 +21,6 @@ from eyecontrol.config import load_settings
 from eyecontrol.encoding import configure_streams
 from eyecontrol.logging_setup import configure_logging
 from eyecontrol.ui import render
-from eyecontrol.ui.render import short_phase
 from eyecontrol.ui.theme import make_console
 
 
@@ -78,11 +77,7 @@ def root(
 
 
 def _add_direct_command(command: Command) -> None:
-    help_text = (
-        command.summary
-        if command.available
-        else f"{command.summary} [dim](planned: {short_phase(command.planned_phase or '')})[/dim]"
-    )
+    help_text = command.summary if command.available else f"{command.summary} [dim](not available yet)[/dim]"
 
     if command.max_args == 0:
 

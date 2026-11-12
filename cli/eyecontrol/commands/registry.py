@@ -53,13 +53,12 @@ class NotAvailableError(CommandError):
 
     exit_code = ExitCode.NOT_AVAILABLE
 
-    def __init__(self, command: str, phase: str) -> None:
+    def __init__(self, command: str) -> None:
         super().__init__(
-            f"'{command}' is not available yet, planned for {phase}.",
+            f"'{command}' is not available yet.",
             hint="Nothing was sent or executed. See 'help' for the commands that work today.",
         )
         self.command = command
-        self.phase = phase
 
 
 class ExitRequested(Exception):
@@ -81,13 +80,13 @@ class Command:
     scope: CommandScope = CommandScope.BOTH
     aliases: tuple[str, ...] = ()
     category: str = "General"
-    planned_phase: str | None = None  # None = implemented
+    planned: bool = False  # True = part of the design, not implemented
     arg_choices: tuple[str, ...] | None = None  # allowed values for the first argument
     validator: Validator | None = None  # extra validation (options, formats)
 
     @property
     def available(self) -> bool:
-        return self.planned_phase is None
+        return not self.planned
 
     @property
     def usage_line(self) -> str:

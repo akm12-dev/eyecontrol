@@ -28,14 +28,15 @@ def test_banner_shows_honest_state(ctx: AppContext, output: io.StringIO) -> None
     assert "Remote Access Terminal" in text
     assert "not configured" in text
     assert "not signed in" in text
-    assert "Connected" not in text and "signed in as" not in text  # nothing is connected in phase 2
+    assert "Connected" not in text and "signed in as" not in text  # nothing is connected in this version
 
 
 def test_help_lists_ready_and_planned(ctx: AppContext, output: io.StringIO) -> None:
     assert execute_line(ctx, "help") == (True, ExitCode.OK)
     text = output.getvalue()
     assert "shell cmd|powershell" in text
-    assert "ready" in text and "phase 6" in text and "Android milestone" in text
+    assert "ready" in text and "planned" in text
+    assert "phase" not in text.lower()
 
 
 def test_status_command(ctx: AppContext, output: io.StringIO) -> None:

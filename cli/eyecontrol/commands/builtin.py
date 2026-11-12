@@ -1,4 +1,4 @@
-"""Commands implemented in phase 2."""
+"""Commands implemented in version 0.1."""
 
 from __future__ import annotations
 

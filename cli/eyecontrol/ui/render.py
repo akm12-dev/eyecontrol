@@ -41,14 +41,10 @@ WHERE = {
 }
 
 
-def short_phase(phase: str) -> str:
-    return phase.split(" (")[0]
-
-
 def _state_lines(ctx: AppContext) -> list[tuple[str, Text]]:
     settings = ctx.settings
     if settings.server_url:
-        server = Text.assemble((settings.server_url, "label"), ("  (not connected: server link arrives in phase 3)", "muted"))
+        server = Text.assemble((settings.server_url, "label"), ("  (not connected)", "muted"))
     else:
         server = Text("not configured", style="warn")
     if ctx.technician.is_authenticated:
@@ -103,11 +99,7 @@ def help_table(console: Console, commands: Iterable[Command], *, interactive: bo
         table.add_row(Text(category.upper(), style="muted"), "", "")
         for command in cmds:
             name = command.usage_line if interactive else f"eyecontrol {command.usage_line}"
-            state = (
-                Text("ready", style="ok")
-                if command.available
-                else Text(short_phase(command.planned_phase or ""), style="planned")
-            )
+            state = Text("ready", style="ok") if command.available else Text("planned", style="planned")
             table.add_row(Text(f"  {name}", style="cmd" if command.available else "planned"), command.summary, state)
         table.add_row("", "", "")
     console.print(Padding(table, (1, 2, 0, 2)))
@@ -128,11 +120,7 @@ def command_help(console: Console, command: Command) -> None:
     if command.aliases:
         grid.add_row("Aliases", ", ".join(command.aliases))
     grid.add_row("Where", WHERE.get(command.scope, WHERE[CommandScope.BOTH]))
-    state = (
-        Text("ready", style="ok")
-        if command.available
-        else Text(f"not available yet, planned for {command.planned_phase}", style="warn")
-    )
+    state = Text("ready", style="ok") if command.available else Text("not available yet", style="warn")
     grid.add_row("State", state)
     console.print(Padding(grid, (1, 2)))
 

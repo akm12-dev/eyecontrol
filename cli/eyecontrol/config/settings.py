@@ -17,8 +17,8 @@ Windows  %APPDATA%\\EyeControl                %LOCALAPPDATA%\\EyeControl
 Linux    $XDG_CONFIG_HOME/eyecontrol         $XDG_STATE_HOME/eyecontrol
          (~/.config/eyecontrol)              (~/.local/state/eyecontrol)
 
-No secret is ever read from or written to ``config.toml``: from phase 3,
-credentials and tokens are stored in the OS keyring (Windows Credential
+No secret is ever read from or written to ``config.toml``: credentials and
+tokens, if added later, belong in the OS keyring (Windows Credential
 Manager, Secret Service on Linux).
 """
 

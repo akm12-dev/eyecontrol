@@ -14,11 +14,11 @@ smartphones Android et visualiser des iPhone, depuis une seule interface — uni
 | Commande `eyecontrol` (Windows, Linux) | ✅ fonctionnelle |
 | Console interactive (logo, invite, autocomplétion, historique, barre d'état) | ✅ fonctionnelle |
 | `help`, `status`, `version`, `clear`, `exit` | ✅ fonctionnelles |
-| `login`, `logout`, `devices` | ⏳ phase 3 (serveur et authentification) |
-| `connect`, `disconnect`, `sysinfo` | ⏳ phase 4 (agent Windows) |
-| `shell cmd\|powershell` | ⏳ phase 5 (terminal distant) |
-| `desktop` | ⏳ phase 6 (contrôle graphique) |
-| `screen`, `control` | ⏳ étapes mobiles |
+| `login`, `logout`, `devices` | ⏳ pas encore disponible |
+| `connect`, `disconnect`, `sysinfo` | ⏳ pas encore disponible |
+| `shell cmd\|powershell` | ⏳ pas encore disponible |
+| `desktop` | ⏳ pas encore disponible |
+| `screen`, `control` | ⏳ pas encore disponible |
 
 Les commandes pas encore développées existent déjà (aide, autocomplétion, vérification des arguments) mais
 affichent clairement **« not available yet »** et ne font rien. Aucune fonction n'est simulée.
@@ -60,13 +60,13 @@ eyecontrol                       ouvre la console interactive
 eyecontrol --version             affiche la version
 eyecontrol --help                aide des commandes directes
 eyecontrol status                état (serveur, technicien, fichiers)
-eyecontrol devices --type ios    (phase 3) appareils filtrés par système
+eyecontrol devices --type ios    (pas encore disponible) appareils filtrés par système
 ```
 
 Dans la console :
 
 ```text
-eyecontrol > help            liste des commandes (ready / phase prévue)
+eyecontrol > help            liste des commandes (ready / planned)
 eyecontrol > help shell      détail d'une commande
 eyecontrol > status
 eyecontrol > exit            ou Ctrl+D
@@ -98,7 +98,7 @@ level = "INFO"
 
 Variables : `EYECONTROL_SERVER_URL`, `EYECONTROL_ENV` (`production` / `development`),
 `EYECONTROL_LOG_LEVEL`, `EYECONTROL_CONFIG_DIR`, `EYECONTROL_DATA_DIR`.
-Aucun mot de passe ni jeton ne va dans ce fichier : ils iront dans le coffre du système (phase 3).
+Aucun mot de passe ni jeton ne va dans ce fichier.
 
 ## Développement
 
@@ -114,12 +114,12 @@ cd cli; ..\.venv\Scripts\mypy eyecontrol  # types
 
 ```text
 cli/        console technicien (Python : Typer, prompt_toolkit, Rich)
-server/     serveur FastAPI + PostgreSQL (phase 3)
+server/     serveur (retiré du plan pour l'instant)
 agent/      agents installés sur les appareils (Rust) — agent/windows/ d'abord
 mobile/     agents Android et iOS (étapes mobiles)
-viewer/     fenêtre de visualisation du bureau / de l'écran (phase 6)
+viewer/     fenêtre de visualisation du bureau / de l'écran
 shared/     contrats communs (schéma de déclaration des appareils)
-installer/  installateurs (phase 8)
+installer/  installateurs
 tests/      tests automatisés
 docs/       architecture, feuille de route, tests manuels
 ```

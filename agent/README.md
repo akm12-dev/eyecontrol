@@ -2,7 +2,7 @@
 
 Programmes installés sur les appareils assistés. Un sous-dossier par système :
 
-* `windows/` : premier agent (phases 4 à 6)
+* `windows/` : premier agent
 * `linux/` : plus tard
 
 Les agents mobiles sont dans `../mobile/`. Tous annoncent leurs capacités selon
