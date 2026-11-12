@@ -1,4 +1,9 @@
+<p align="center"><img src="assets/logo.png" alt="EyeControl" width="520"></p>
+
 # EyeControl
+
+**Site : https://akm12.com/logiciels/eyecontrol** · Téléchargements : https://github.com/akm12-dev/releases ·
+Guide PDF : `Guide_EyeControl-0.1.0.pdf` (dans la release)
 
 Logiciel de télémaintenance piloté depuis le terminal : on tape `eyecontrol` dans CMD, PowerShell,
 Windows Terminal (ou un terminal Linux / Kali) et la console EyeControl s'ouvre.
@@ -25,7 +30,12 @@ affichent clairement **« not available yet »** et ne font rien. Aucune fonctio
 
 ## Installation
 
-### Windows 10 / 11
+### Windows 10 / 11 — version prête à l'emploi
+
+Téléchargez `EyeControl-0.1.0-windows.zip` sur https://akm12.com/logiciels/eyecontrol, extrayez-le
+(ex. `C:\Outils\EyeControl`), ajoutez ce dossier au PATH, puis tapez `eyecontrol`. Détails dans `LISEZMOI.txt`.
+
+### Windows 10 / 11 — depuis le code source
 
 Prérequis : Python 3.12 ou plus récent (avec « Add to PATH »).
 
@@ -109,6 +119,19 @@ python -m venv .venv
 .venv\Scripts\ruff check cli tests        # style
 cd cli; ..\.venv\Scripts\mypy eyecontrol  # types
 ```
+
+## Construire une version
+
+```powershell
+.venv\Scripts\python -m pip install pyinstaller
+powershell -ExecutionPolicy Bypass -File build_windows.ps1   # dist\ : exe, zip Windows, wheel
+python docsuild\shots.py                                   # captures de la console
+python docsuild\make_guide.py                              # guide PDF (Chrome requis)
+```
+
+## Licence
+
+Code consultable, tous droits réservés : voir [LICENSE](LICENSE).
 
 ## Organisation
 

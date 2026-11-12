@@ -1,0 +1,36 @@
+EyeControl 0.1.0 — AKM12 (https://akm12.com/logiciels/eyecontrol)
+=======================================================================
+
+EyeControl est une console de télémaintenance qui s'ouvre directement dans le
+terminal (CMD, PowerShell, Windows Terminal) avec la commande « eyecontrol ».
+
+Version 0.1.0 : console interactive seulement.
+  Disponibles : help, status, version, clear, exit (et eyecontrol --version / --help).
+  Les autres commandes (login, devices, connect, shell, desktop, screen,
+  control) sont affichées comme « not available yet » : elles ne font rien.
+
+INSTALLATION (Windows 10 / 11)
+  1. Extraire l'archive, par exemple dans C:\Outils\EyeControl
+  2. Ajouter ce dossier au PATH de votre compte, dans PowerShell :
+       [Environment]::SetEnvironmentVariable("Path",
+         [Environment]::GetEnvironmentVariable("Path","User") + ";C:\Outils\EyeControl", "User")
+  3. Fermer puis rouvrir le terminal, et taper :  eyecontrol
+
+  Sans modifier le PATH, on peut aussi lancer directement :
+       C:\Outils\EyeControl\eyecontrol.exe
+
+  Si Windows SmartScreen s'affiche : vérifiez l'empreinte SHA-256 publiée,
+  puis « Informations complémentaires » > « Exécuter quand même ».
+
+UTILISATION
+  eyecontrol              ouvre la console (Tab : compléter, flèches : historique,
+                          Ctrl+C : effacer la ligne, exit ou Ctrl+D : quitter)
+  eyecontrol status       affiche l'état sans ouvrir la console
+  eyecontrol --version    affiche la version
+
+Fichiers créés : %APPDATA%\EyeControl (configuration, facultative) et
+%LOCALAPPDATA%\EyeControl (journal et historique). Pour désinstaller : supprimer
+le dossier du programme, ces deux dossiers, et retirer le dossier du PATH.
+
+Guide complet : Guide_EyeControl-0.1.0.pdf (https://akm12.com/logiciels/eyecontrol)
+Licence : voir LICENSE.txt (code consultable, tous droits réservés).

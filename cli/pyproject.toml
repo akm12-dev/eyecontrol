@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "EyeControl — remote access terminal for authorized IT support (technician CLI)"
 readme = "README.md"
 requires-python = ">=3.12"
-license = "LicenseRef-Proprietary"
+license = "LicenseRef-AKM12-Code-Consultable"
 authors = [{ name = "AKM12" }]
 classifiers = [
   "Environment :: Console",

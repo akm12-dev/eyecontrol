@@ -43,9 +43,9 @@ def register_planned(registry: Registry) -> None:
     _planned(
         registry,
         "devices",
-        "List the devices you are allowed to access",
+        "List the devices you are allowed to access (TYPE: windows, linux, android, ios)",
         category="Devices",
-        usage="[--type windows|linux|android|ios]",
+        usage="[--type TYPE]",
         max_args=2,
         validator=validate_devices_args,
     )

@@ -2,3 +2,6 @@ extend = "cli/pyproject.toml"
 
 [lint.isort]
 known-first-party = ["eyecontrol"]
+
+[lint.per-file-ignores]
+"docs/build/*" = ["E501", "SIM115"]

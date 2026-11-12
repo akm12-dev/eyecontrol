@@ -6,8 +6,8 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-build/
-dist/
+/build/
+/dist/
 
 # Rust
 target/
@@ -23,3 +23,9 @@ config.toml
 Thumbs.db
 .vscode/
 .idea/
+
+# Generated build outputs
+docs/build/out/
+docs/build/pages/
+docs/build/shots/_data/
+docs/build/shots/*.html
