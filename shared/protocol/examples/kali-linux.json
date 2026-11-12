@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "device_id": "3a2b1c0d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+  "display_id": "LX-001",
+  "name": "kali",
+  "platform": "linux",
+  "os_version": "Kali GNU/Linux Rolling",
+  "agent_version": "0.1.0",
+  "capabilities": {
+    "screen_view": true,
+    "remote_input": "mouse_keyboard",
+    "remote_shell": ["bash", "zsh"],
+    "file_transfer": false,
+    "sysinfo": true
+  }
+}

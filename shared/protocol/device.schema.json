@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eyecontrol.local/schemas/device.schema.json",
+  "title": "EyeControl device announcement",
+  "description": "Sent by every agent (Windows, Linux, Android, iOS) when it registers and each time it connects to the server. Capabilities describe what the agent can technically do on this device right now; they never grant access by themselves. The server only opens a session for the intersection of: capabilities, technician permissions on the device, and the remote user's consent.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "device_id", "display_id", "platform", "agent_version", "capabilities"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "device_id": {
+      "description": "Server-issued UUID. Stable identity, bound to the device public key.",
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "display_id": {
+      "description": "Short human alias shown in the CLI (PC-001, LX-001, MB-001). Not an authentication factor.",
+      "type": "string",
+      "pattern": "^[A-Z]{2}-[0-9]{3,6}$"
+    },
+    "name": { "description": "Computer or phone name as reported by the OS.", "type": "string", "maxLength": 128 },
+    "platform": { "enum": ["windows", "linux", "android", "ios"] },
+    "os_version": { "type": "string", "maxLength": 64 },
+    "agent_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+([-+][0-9A-Za-z.-]+)?$" },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["screen_view", "remote_input", "remote_shell", "file_transfer", "sysinfo"],
+      "properties": {
+        "screen_view": { "type": "boolean", "description": "Can stream its screen (after consent)." },
+        "remote_input": {
+          "description": "Kind of remote input the device can accept: none, touch gestures (Android accessibility) or mouse+keyboard (desktop).",
+          "enum": ["none", "touch", "mouse_keyboard"]
+        },
+        "remote_shell": {
+          "description": "Remote terminals the device can open. Always empty for mobiles.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["cmd", "powershell", "bash", "zsh"] }
+        },
+        "file_transfer": { "type": "boolean" },
+        "sysinfo": { "type": "boolean" }
+      }
+    },
+    "limitations": {
+      "description": "Human-readable reasons why a capability is reduced (e.g. accessibility service disabled, Wayland portal refused).",
+      "type": "array",
+      "items": { "type": "string", "maxLength": 200 },
+      "maxItems": 16
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "platform": { "enum": ["android", "ios"] } } },
+      "then": { "properties": { "capabilities": { "properties": { "remote_shell": { "maxItems": 0 } } } } }
+    },
+    {
+      "if": { "properties": { "platform": { "const": "ios" } } },
+      "then": { "properties": { "capabilities": { "properties": { "remote_input": { "const": "none" } } } } }
+    },
+    {
+      "if": { "properties": { "platform": { "const": "android" } } },
+      "then": { "properties": { "capabilities": { "properties": { "remote_input": { "enum": ["none", "touch"] } } } } }
+    },
+    {
+      "if": { "properties": { "platform": { "enum": ["windows", "linux"] } } },
+      "then": { "properties": { "capabilities": { "properties": { "remote_input": { "enum": ["none", "mouse_keyboard"] } } } } }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "eyecontrol"
+dynamic = ["version"]
+description = "EyeControl — remote access terminal for authorized IT support (technician CLI)"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "LicenseRef-Proprietary"
+authors = [{ name = "AKM12" }]
+classifiers = [
+  "Environment :: Console",
+  "Operating System :: Microsoft :: Windows :: Windows 10",
+  "Operating System :: Microsoft :: Windows :: Windows 11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+  "typer>=0.15",
+  "rich>=13.9",
+  "prompt_toolkit>=3.0.48",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "ruff>=0.8", "mypy>=1.13", "jsonschema>=4.23"]
+
+[project.scripts]
+eyecontrol = "eyecontrol.main:main"
+
+[tool.hatch.version]
+path = "eyecontrol/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["eyecontrol"]
+
+[tool.ruff]
+line-length = 130
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+ignore = ["UP045"]  # Optional[...] is kept in Typer signatures for clarity
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_ignores = false

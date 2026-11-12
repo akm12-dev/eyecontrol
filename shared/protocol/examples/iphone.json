@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "device_id": "9c4d7e10-2f5a-4c6b-b3d8-1e0f2a3b4c5d",
+  "display_id": "MB-003",
+  "name": "IPHONE-15",
+  "platform": "ios",
+  "os_version": "iOS 18",
+  "agent_version": "0.1.0",
+  "capabilities": {
+    "screen_view": true,
+    "remote_input": "none",
+    "remote_shell": [],
+    "file_transfer": false,
+    "sysinfo": true
+  },
+  "limitations": ["iOS public APIs do not allow remote touch or keyboard input"]
+}

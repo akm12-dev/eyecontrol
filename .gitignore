@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# Rust
+target/
+
+# Logs, local config, secrets
+*.log
+.env
+.env.*
+config.toml
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
